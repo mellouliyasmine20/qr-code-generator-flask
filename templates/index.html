@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>✨ Générateur QR Code</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #fdf6ec 0%, #f7e9d7 100%);
+            color: #3d3d3d;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #c1502e;
+            font-size: 2rem;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #8a8a8a;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 24px rgba(193, 80, 46, 0.12);
+            margin-bottom: 30px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #2e6f6e;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e8ddd0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 18px;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #c1502e;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #c1502e, #d97a4a);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.15s, box-shadow 0.15s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(193, 80, 46, 0.3);
+        }
+
+        .error {
+            background: #fdeaea;
+            color: #c0392b;
+            padding: 12px 16px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .result {
+            text-align: center;
+        }
+
+        .result h2 {
+            color: #2e6f6e;
+        }
+
+        .result img {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin: 15px 0;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 20px;
+            background: #2e6f6e;
+            color: white;
+            text-decoration: none;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .download-btn:hover {
+            background: #245957;
+        }
+
+        h2.history-title {
+            color: #c1502e;
+            margin-top: 10px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .history-item img {
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .history-info {
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .history-date {
+            color: #8a8a8a;
+            font-size: 0.8rem;
+        }
+
+        .history-data {
+            word-break: break-all;
+            font-size: 0.9rem;
+            margin: 4px 0;
+        }
+
+        .history-item a {
+            color: #2e6f6e;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
+        .empty {
+            text-align: center;
+            color: #b0b0b0;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>✨ Générateur de QR Code</h1>
+        <p class="subtitle">Transforme un lien ou un texte en QR code en un instant 🔗</p>
+
+        <div class="card">
+            {% if error %}
+                <div class="error">⚠️ {{ error }}</div>
+            {% endif %}
+
+            <form method="POST" action="/generate">
+                <label for="data">🔗 Lien ou texte à encoder</label>
+                <input type="text" id="data" name="data" value="{{ data or '' }}" placeholder="https://..." required>
+
+                <label for="fill_color">🎨 Couleur des modules</label>
+                <input type="text" id="fill_color" name="fill_color" value="black">
+
+                <label for="back_color">🖼️ Couleur de fond</label>
+                <input type="text" id="back_color" name="back_color" value="white">
+
+                <button type="submit">✨ Générer le QR Code</button>
+            </form>
+        </div>
+
+
+        {% if qr_image %}
+            <div class="card result">
+                <h2>🎉 Résultat</h2>
+                <p>{{ data }}</p>
+                <img src="{{ url_for('static', filename='qrcodes/' + qr_image) }}" alt="QR Code généré" width="220">
+                <br>
+                <a class="download-btn" href="{{ url_for('static', filename='qrcodes/' + qr_image) }}" download>⬇️ Télécharger</a>
+                 <br><br>
+                <a href="/" class="home-btn">🏠 Retour à l'accueil</a>
+            </div>
+        {% endif %}
+
+        <h2 class="history-title">🕓 Historique</h2>
+        {% if history %}
+            {% for item in history %}
+                <div class="history-item">
+                    <img src="{{ url_for('static', filename='qrcodes/' + item.filename) }}" width="60" alt="QR code">
+                    <div class="history-info">
+                        <div class="history-date">📅 {{ item.date }}</div>
+                        <div class="history-data">{{ item.data }}</div>
+                        <a href="{{ url_for('static', filename='qrcodes/' + item.filename) }}" download>⬇️ Télécharger</a>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="empty">Aucun QR code généré pour l'instant 🌱</p>
+        {% endif %}
+    </div>
+</body>
+</html>
