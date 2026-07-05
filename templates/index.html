@@ -172,6 +172,37 @@
             color: #b0b0b0;
             font-style: italic;
         }
+        select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #e8ddd0;
+            border-radius: 10px;
+            font-size: 1rem;
+            margin-bottom: 18px;
+            background: white;
+            cursor: pointer;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: #c1502e;
+        }
+        .clear-btn {
+            background: transparent;
+            color: #c0392b;
+            border: 2px solid #c0392b;
+            width: auto;
+            padding: 8px 20px;
+            font-size: 0.9rem;
+            margin-top: 10px;
+        }
+
+        .clear-btn:hover {
+            background: #c0392b;
+            color: white;
+            transform: none;
+            box-shadow: none;
+        }
     </style>
 </head>
 <body>
@@ -189,11 +220,27 @@
                 <input type="text" id="data" name="data" value="{{ data or '' }}" placeholder="https://..." required>
 
                 <label for="fill_color">🎨 Couleur des modules</label>
-                <input type="text" id="fill_color" name="fill_color" value="black">
+                <select id="fill_color" name="fill_color">
+                    <option value="black">⬛ Noir classique</option>
+                    <option value="#c1502e">🟧 Terracotta</option>
+                    <option value="#2e6f6e">🟦 Bleu-vert méditerranéen</option>
+                    <option value="#8e44ad">🟪 Violet royal</option>
+                    <option value="#c0392b">🟥 Rouge grenat</option>
+                    <option value="#d4a017">🟨 Doré</option>
+                    <option value="#1a5276">🔵 Bleu marine</option>
+                    <option value="#1e8449">🟩 Vert émeraude</option>
+                    <option value="#d63384">🩷 Rose fuchsia</option>
+                </select>
 
                 <label for="back_color">🖼️ Couleur de fond</label>
-                <input type="text" id="back_color" name="back_color" value="white">
-
+                <select id="back_color" name="back_color">
+                    <option value="white">⬜ Blanc classique</option>
+                    <option value="#fdf6ec">🟡 Ivoire chaleureux</option>
+                    <option value="#f0e6d6">🟤 Beige sable</option>
+                    <option value="#e8f4f3">🩵 Menthe pâle</option>
+                    <option value="#fdeaea">🩷 Rose poudré</option>
+                    <option value="#fff8dc">🟨 Crème dorée</option>
+                </select>
                 <button type="submit">✨ Générer le QR Code</button>
             </form>
         </div>
@@ -223,6 +270,23 @@
                     </div>
                 </div>
             {% endfor %}
+            {% if history %}
+            {% for item in history %}
+                <div class="history-item">
+                    <img src="{{ url_for('static', filename='qrcodes/' + item.filename) }}" width="60" alt="QR code">
+                    <div class="history-info">
+                        <div class="history-date">📅 {{ item.date }}</div>
+                        <div class="history-data">{{ item.data }}</div>
+                        <a href="{{ url_for('static', filename='qrcodes/' + item.filename) }}" download>⬇️ Télécharger</a>
+                    </div>
+                </div>
+            {% endfor %}
+            <form method="POST" action="/clear_history">
+                <button type="submit" class="clear-btn">🗑️ Vider l'historique</button>
+            </form>
+        {% else %}
+            <p class="empty">Aucun QR code généré pour l'instant 🌱</p>
+        {% endif %}
         {% else %}
             <p class="empty">Aucun QR code généré pour l'instant 🌱</p>
         {% endif %}

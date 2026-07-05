@@ -3,8 +3,7 @@ import json
 import uuid
 from datetime import datetime
 import qrcode
-from flask import Flask, render_template, request
-
+from flask import Flask, render_template, request, redirect
 app = Flask(__name__)
 
 QR_FOLDER = os.path.join("static", "qrcodes")
@@ -67,6 +66,10 @@ def generate():
 
     return render_template("index.html", qr_image=filename, data=data, history=history)
 
+@app.route("/clear_history", methods=["POST"])
+def clear_history():
+    save_history([])
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)
