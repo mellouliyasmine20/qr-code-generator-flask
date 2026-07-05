@@ -14,9 +14,8 @@ A simple and elegant web application to generate customizable QR codes from any 
 <p align="center">
   <img src="demo.gif" alt="Démo du générateur de QR code" width="600">
 </p>
-## Screenshots
 
-![Screenshot](screenshot.png)
+
 
 ## Tech Stack
 
